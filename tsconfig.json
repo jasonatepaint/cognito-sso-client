@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "allowJs": false,
+    "declaration": true,
+    "esModuleInterop": true,
+    "moduleResolution": "node",
+    "outDir": "dist",
+    "sourceMap": true,
+    "target": "ES6"
+  },
+  "include": ["src", "tests"]
+}

@@ -1,17 +1,6 @@
 module.exports = {
-	"env": {
-		"commonjs": true,
-		"es6": true,
-		"node": true,
-		"jest": true,
-		"browser": true,
-	},
-	"parser": "@babel/eslint-parser",
-	"parserOptions": {
-		"ecmaVersion": 2017,
-		"sourceType": "module"
-	},
-	"extends": "strongloop",
+	env: { browser: true, es2020: true },
+	parser: '@typescript-eslint/parser',
 	"rules": {
 		"eol-last": "off",
 		"brace-style": "off",

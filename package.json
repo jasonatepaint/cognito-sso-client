@@ -1,6 +1,7 @@
 {
   "name": "@jasonatepaint/cognito-sso-client",
-  "version": "1.0.1",
+  "version": "1.0.2",
+  "type": "module",
   "bugs": {
     "url": "https://github.com/jasonatepaint/cognito-sso-client/issues"
   },
@@ -10,7 +11,7 @@
     "prepare": "npm run clean && npm run lint && npm run build",
     "lint": "./node_modules/.bin/eslint src",
     "build-old": "babel src --extensions \".ts\" --out-dir dist && webpack",
-    "build:pack": "node esbuild.config.js",
+    "build:pack": "node esbuild.config.cjs",
     "build:types": "tsc --project tsconfig.build.json && npm run lint",
     "build": "npm run build:pack && npm run build:types",
     "deploy": "npm publish",

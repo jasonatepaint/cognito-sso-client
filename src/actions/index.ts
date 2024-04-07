@@ -6,10 +6,10 @@ import { redeemCodeAction } from "./redeemCode";
 import { refreshTokensAction } from "./refreshTokens";
 
 export {
-	authorizeAction,
-	checkAuthenticationAction,
-	initializeAction,
-	logoutAction,
-	redeemCodeAction,
-	refreshTokensAction,
+    authorizeAction,
+    checkAuthenticationAction,
+    initializeAction,
+    logoutAction,
+    redeemCodeAction,
+    refreshTokensAction,
 };

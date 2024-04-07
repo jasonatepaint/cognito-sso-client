@@ -1,5 +1,5 @@
-import {Action, ClientConfig} from "../models";
-import {Tokens} from "../models/tokens";
+import { Action, ClientConfig } from "../models";
+import { Tokens } from "../models/tokens";
 
 /**
  * Starts the initialization process
@@ -7,13 +7,13 @@ import {Tokens} from "../models/tokens";
  * @param config
  */
 export const initializeAction = (id: string, config: ClientConfig) => {
-	config.iFrame.contentWindow.postMessage(
-		new Action(config.clientId, "initialize", {
-			id
-		}),
-		'*',
-	);
+    config.iFrame.contentWindow.postMessage(
+        new Action(config.clientId, "initialize", {
+            id,
+        }),
+        "*",
+    );
 
-	//will remove expired tokens before any authentication begins for sanity-sake
-	Tokens.get();
+    //will remove expired tokens before any authentication begins for sanity-sake
+    Tokens.get();
 };

@@ -1,9 +1,9 @@
 import { authorizeAction } from "../../src/actions";
-import {generateChallenge, generateRandom, buildUrlFromConfig} from "../../src/utils";
-import {setLocalStorageWithExpiration} from "../../src/storage";
-import {CODE_VERIFIER_STORAGE_KEY, QS_STATE} from "../../src/const";
-import {launchUri} from "../../src/utils/browser";
-import {defaultConfig} from "../data";
+import { generateChallenge, generateRandom, buildUrlFromConfig } from "../../src/utils";
+import { setLocalStorageWithExpiration } from "../../src/storage";
+import { CODE_VERIFIER_STORAGE_KEY, QS_STATE } from "../../src/const";
+import { launchUri } from "../../src/utils/browser";
+import { defaultConfig } from "../data";
 
 const config = defaultConfig();
 
@@ -16,38 +16,38 @@ const generateChallengeMocked = generateChallenge as jest.Mock;
 const setLocalStorageWithExpirationMocked = setLocalStorageWithExpiration as jest.Mock;
 const launchUriMocked = launchUri as jest.Mock;
 
-describe('Authorize', () => {
-	const pkceKey = "1231433423423";
-	const codeChallenge = "hdsljhasdlfhasdfsaf";
+describe("Authorize", () => {
+    const codeVerifier = "1231433423423";
+    const codeChallenge = "hdsljhasdlfhasdfsaf";
 
-	beforeEach(function () {
-		generateRandomMocked.mockClear();
-		generateRandomMocked.mockReturnValue(pkceKey);
+    beforeEach(function () {
+        generateRandomMocked.mockClear();
+        generateRandomMocked.mockReturnValue(codeVerifier);
 
-		generateChallengeMocked.mockClear();
-		generateChallengeMocked.mockReturnValue(codeChallenge);
+        generateChallengeMocked.mockClear();
+        generateChallengeMocked.mockReturnValue(codeChallenge);
 
-		setLocalStorageWithExpirationMocked.mockClear();
-	});
+        setLocalStorageWithExpirationMocked.mockClear();
+    });
 
-	test('as expected', async () => {
-		const encodedClientState = "this-is-encoded";
-		authorizeAction(config, encodedClientState);
+    test("as expected", async () => {
+        const encodedClientState = "this-is-encoded";
+        authorizeAction(config, encodedClientState);
 
-		expect(generateRandomMocked).toHaveBeenCalledWith(128);
-		expect(setLocalStorageWithExpirationMocked).toHaveBeenCalledWith(CODE_VERIFIER_STORAGE_KEY, pkceKey, 300);
-		expect(generateChallengeMocked).toHaveBeenCalledWith(pkceKey);
-		const url = `${buildUrlFromConfig(config)}&codeChallenge=${codeChallenge}&${QS_STATE}=${encodedClientState}`;
-		expect(launchUriMocked).toHaveBeenCalledWith(url);
-	});
+        expect(generateRandomMocked).toHaveBeenCalledWith(128);
+        expect(setLocalStorageWithExpirationMocked).toHaveBeenCalledWith(CODE_VERIFIER_STORAGE_KEY, codeVerifier, 900);
+        expect(generateChallengeMocked).toHaveBeenCalledWith(codeVerifier);
+        const url = `${buildUrlFromConfig(config)}&codeChallenge=${codeChallenge}&${QS_STATE}=${encodedClientState}`;
+        expect(launchUriMocked).toHaveBeenCalledWith(url);
+    });
 
-	test('no clientState', async () => {
-		authorizeAction(config);
+    test("no clientState", async () => {
+        authorizeAction(config);
 
-		expect(generateRandomMocked).toHaveBeenCalledWith(128);
-		expect(setLocalStorageWithExpirationMocked).toHaveBeenCalledWith(CODE_VERIFIER_STORAGE_KEY, pkceKey, 300);
-		expect(generateChallengeMocked).toHaveBeenCalledWith(pkceKey);
-		const url = `${buildUrlFromConfig(config)}&codeChallenge=${codeChallenge}`;
-		expect(launchUriMocked).toHaveBeenCalledWith(url);
-	});
+        expect(generateRandomMocked).toHaveBeenCalledWith(128);
+        expect(setLocalStorageWithExpirationMocked).toHaveBeenCalledWith(CODE_VERIFIER_STORAGE_KEY, codeVerifier, 900);
+        expect(generateChallengeMocked).toHaveBeenCalledWith(codeVerifier);
+        const url = `${buildUrlFromConfig(config)}&codeChallenge=${codeChallenge}`;
+        expect(launchUriMocked).toHaveBeenCalledWith(url);
+    });
 });

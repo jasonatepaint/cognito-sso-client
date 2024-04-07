@@ -1,4 +1,4 @@
-import {Action, AuthenticationState, ClientConfig} from "../models";
+import { Action, AuthenticationState, ClientConfig } from "../models";
 
 /**
  * Logs out the current user
@@ -9,18 +9,25 @@ import {Action, AuthenticationState, ClientConfig} from "../models";
  * @param redirectToLogin indicates that the user should be redirected to a login page after logout
  * @param encodedClientState - encoded client state - will be returned in response
  */
-export const logoutAction = (id: string, config: ClientConfig, state: AuthenticationState, clientOnlyLogout: boolean, redirectToLogin = true, encodedClientState?: string) => {
-	redirectToLogin = redirectToLogin ?? true;
-	state.clearAuthentication();
+export const logoutAction = (
+    id: string,
+    config: ClientConfig,
+    state: AuthenticationState,
+    clientOnlyLogout: boolean,
+    redirectToLogin = true,
+    encodedClientState?: string,
+) => {
+    redirectToLogin = redirectToLogin ?? true;
+    state.clearAuthentication();
 
-	config.iFrame.contentWindow.postMessage(
-		new Action(config.clientId, "logout", {
-			id,
-			redirectUnauthenticated: redirectToLogin,
-			redirectUri: config.redirectUri,
-			clientState: encodedClientState,
-			clientOnlyLogout
-		}),
-		'*',
-	);
+    config.iFrame.contentWindow.postMessage(
+        new Action(config.clientId, "logout", {
+            id,
+            redirectUnauthenticated: redirectToLogin,
+            redirectUri: config.redirectUri,
+            clientState: encodedClientState,
+            clientOnlyLogout,
+        }),
+        "*",
+    );
 };

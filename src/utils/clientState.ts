@@ -1,23 +1,23 @@
 import Base64 from "crypto-js/enc-base64";
 import Utf8 from "crypto-js/enc-utf8";
 import { ClientState } from "../models";
-import {Logger} from "./logging";
+import { Logger } from "./logging";
 
 /**
  * Prepares clientState to be submitted to the Component API by adding referrer from the browser and base64 encoding
  * @param {Object} clientState - a client supplied value that is returned with the response
  * @returns {string} base64 encoded string containing the clientState
  */
-export const prepare = (clientState?: ClientState) : string => {
+export const prepare = (clientState?: ClientState): string => {
     const referrer = document.location.href;
 
     if (!clientState) {
-        return encode({referrer});
+        return encode({ referrer });
     }
 
     if (typeof clientState === "string") {
         //if is a base64 string, we'll try to decode/parse. Otherwise, we ignore it
-        clientState = isEncoded(clientState) ? decodeAndParse(<string>clientState) : { };
+        clientState = isEncoded(clientState) ? decodeAndParse(<string>clientState) : {};
     } else if (typeof clientState !== "object") {
         clientState = {};
     }
@@ -38,16 +38,15 @@ export const encode = (clientState: ClientState) => {
  * Decodes and parses clientState returned from Component API or Authorization
  * @param encodedClientState
  */
-export const decodeAndParse = (encodedClientState: string) : ClientState | undefined  => {
-    if (!encodedClientState)
-        return undefined;
+export const decodeAndParse = (encodedClientState: string): ClientState | undefined => {
+    if (!encodedClientState) return undefined;
 
     try {
         if (typeof encodedClientState !== "string") {
             return <ClientState>encodedClientState;
         }
 
-        if(isEncoded(encodedClientState)) {
+        if (isEncoded(encodedClientState)) {
             const clientStateWords = Base64.parse(encodedClientState);
             const clientStateJson = Utf8.stringify(clientStateWords);
             return JSON.parse(clientStateJson);

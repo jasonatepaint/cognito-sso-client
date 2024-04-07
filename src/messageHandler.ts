@@ -1,15 +1,19 @@
 import { authorizeAction } from "./actions";
-import { handleAuthenticationUpdated } from "./eventHandlers";
+import { handleAuthenticationEvent } from "./eventHandlers";
 import { makeCallbacks } from "./utils/callbacks";
 import { getValueFromQueryString } from "./utils/url";
 import { QS_STATE } from "./const";
-import {AuthenticationState, ClientConfig, ResponseMessage} from "./models";
-import {Logger} from "./utils/logging";
+import { AuthenticationState, ClientConfig, ResponseMessage } from "./models";
+import { Logger } from "./utils/logging";
 
 /**
  * handles a postMessage event from the SSO Identity Broker
  */
-export const handleMessage = (message: MessageEvent<ResponseMessage>, config: ClientConfig, state: AuthenticationState) => {
+export const handleMessage = (
+    message: MessageEvent<ResponseMessage>,
+    config: ClientConfig,
+    state: AuthenticationState,
+) => {
     const responseMessage = message.data;
     Logger.debug("Message Received", JSON.stringify(responseMessage, null, 2));
 
@@ -18,13 +22,7 @@ export const handleMessage = (message: MessageEvent<ResponseMessage>, config: Cl
         return;
     }
 
-    const {
-        id,
-        success,
-        isAuthenticated,
-        authentication,
-        user
-    } = responseMessage.details;
+    const { id, success, isAuthenticated, authentication, user } = responseMessage.details;
 
     if (user) {
         Object.freeze(user);
@@ -35,8 +33,8 @@ export const handleMessage = (message: MessageEvent<ResponseMessage>, config: Cl
     // If it exists, we'll decode it from the QS first, because it was a redirect. If we don't have state on the QS, we'll
     // search for it in the response
     const qsState = getValueFromQueryString(QS_STATE);
-    const encodedClientState =  qsState || responseMessage.details.clientState;
-    if(qsState) {
+    const encodedClientState = qsState || responseMessage.details.clientState;
+    if (qsState) {
         responseMessage.details.clientState = encodedClientState;
     }
 
@@ -47,9 +45,8 @@ export const handleMessage = (message: MessageEvent<ResponseMessage>, config: Cl
         case "checkAuthentication":
         case "redeemCode":
         case "refreshTokens":
-            if (success && isAuthenticated && authentication) {
-                handleAuthenticationUpdated(authentication);
-            }
+            const tokens = success && isAuthenticated && authentication ? authentication : undefined;
+            handleAuthenticationEvent(tokens);
             makeCallbacks(id, config.callbacks, responseMessage);
             break;
         case "logout":
@@ -62,7 +59,7 @@ export const handleMessage = (message: MessageEvent<ResponseMessage>, config: Cl
             authorizeAction(config, encodedClientState);
             break;
         default:
-            Logger.debug('Invalid message response received', responseMessage);
+            Logger.debug("Invalid message response received", responseMessage);
             break;
     }
 };

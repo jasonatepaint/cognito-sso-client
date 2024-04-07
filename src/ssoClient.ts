@@ -6,22 +6,20 @@ import {
     redeemCodeAction,
     refreshTokensAction,
 } from "./actions";
-import {ActionType, AuthenticationState, ClientConfig} from "./models";
-import {handleMessage} from "./messageHandler";
-import {prepare} from "./utils/clientState";
-import {ActivityMonitor} from "./activityMonitor";
-import {parseToken} from "./utils";
+import { ActionType, AuthenticationState, ClientConfig } from "./models";
+import { handleMessage } from "./messageHandler";
+import { prepare } from "./utils/clientState";
+import { ActivityMonitor } from "./activityMonitor";
+import { parseToken } from "./utils";
 import dayjs from "dayjs";
-import {createCallbackId} from "./utils/callbacks";
-import {Tokens} from "./models/tokens";
-import {ClientState, User} from "./models";
-import {CheckAuthenticationOptions, InitializeOptions, LogoutOptions} from "./models/options";
-import {FunctionCallbacks, ResponseMessage} from "./models/response";
-import {removeTrailingSlash} from "./utils/url";
-import {Logger, LogLevel} from "./utils/logging";
-import {
-    TOKEN_CHECK_INTERVAL_SECONDS
-} from "./const";
+import { createCallbackId } from "./utils/callbacks";
+import { Tokens } from "./models/tokens";
+import { ClientState, User } from "./models";
+import { CheckAuthenticationOptions, InitializeOptions, LogoutOptions } from "./models/options";
+import { FunctionCallbacks, ResponseMessage } from "./models/response";
+import { removeTrailingSlash } from "./utils/url";
+import { Logger, LogLevel } from "./utils/logging";
+import { TOKEN_CHECK_INTERVAL_SECONDS } from "./const";
 
 const tokenExpirationBufferSeconds = 30;
 
@@ -36,37 +34,51 @@ export class SsoClient {
     /**
      * The client id for the app
      **/
-    static get clientId(): string { return config.clientId; }
+    static get clientId(): string {
+        return config.clientId;
+    }
 
     /**
      * The registered Client redirect Uri
      */
-    static get redirectUri(): string { return config.redirectUri; }
+    static get redirectUri(): string {
+        return config.redirectUri;
+    }
 
     /**
      * The URL of the SSO Broker site
      */
-    static get ssoUrl(): string { return config.ssoUrl; }
+    static get ssoUrl(): string {
+        return config.ssoUrl;
+    }
 
     /**
      * holds a reference to the iframe that communicates with the SSO Broker site
      * */
-    static get iFrame(): HTMLIFrameElement { return config.iFrame; }
+    static get iFrame(): HTMLIFrameElement {
+        return config.iFrame;
+    }
 
     /**
      * The callback methods that handle responses to Unified Login Authentication Component API commands
      * */
-    static get callbacks(): FunctionCallbacks { return config.callbacks; }
+    static get callbacks(): FunctionCallbacks {
+        return config.callbacks;
+    }
 
     /**
      * holds references to authentication tokens
      **/
-    static get authentication(): Tokens { return Tokens.get(); }
+    static get authentication(): Tokens {
+        return Tokens.get();
+    }
 
     /**
      * holds an object whose properties describe the current user
      * */
-    static get user(): User { return state.user; }
+    static get user(): User {
+        return state.user;
+    }
 
     /**
      * initializes authentication communication
@@ -86,8 +98,8 @@ export class SsoClient {
         redirectUri: string,
         authFrame: HTMLIFrameElement,
         options?: InitializeOptions,
-        callback?: (message: ResponseMessage) => void
-    ) : string {
+        callback?: (message: ResponseMessage) => void,
+    ): string {
         if (!clientId || clientId.length === 0) {
             throw new Error("clientId is required");
         }
@@ -99,11 +111,11 @@ export class SsoClient {
         //merge users options on top of defaults
         options = {
             autoRefresh: true,
-            ...(options || {})
+            ...(options || {}),
         };
 
         ActivityMonitor.init({
-            onActiveIntervalCallback: handleUserActivity
+            onActiveIntervalCallback: handleUserActivity,
         });
         if (options.autoRefresh) {
             lastTokenCheck = new Date().getTime();
@@ -129,7 +141,7 @@ export class SsoClient {
         const actionId = registerTemporaryCallback(callback, "initialize");
 
         // Add an event handler for communication from auth component.
-        window.addEventListener('message', eventListenerCallback);
+        window.addEventListener("message", eventListenerCallback);
 
         // Set auth component styles on load.
         if (config.iFrame) {
@@ -150,7 +162,7 @@ export class SsoClient {
     static registerCallback(id: string, callback: (message: ResponseMessage) => void) {
         if (!id || !callback) return;
         if (typeof callback !== "function") {
-            throw new Error("Callback should be a function. Actual: " + (typeof callback));
+            throw new Error("Callback should be a function. Actual: " + typeof callback);
         }
         callback.bind(this);
         config.callbacks[id] = callback;
@@ -181,7 +193,11 @@ export class SsoClient {
      * @param clientState - a client supplied value that is returned with the response
      * @param callback - a callback method called when complete
      */
-    static redeemAuthenticationCode(code: string, clientState?: ClientState, callback?: (message: ResponseMessage) => void) {
+    static redeemAuthenticationCode(
+        code: string,
+        clientState?: ClientState,
+        callback?: (message: ResponseMessage) => void,
+    ) {
         const encodedClientState = prepare(clientState);
         const id = registerTemporaryCallback(callback, "redeemCode");
         redeemCodeAction(id, config, state, code, encodedClientState);
@@ -194,7 +210,11 @@ export class SsoClient {
      * @param clientState - a client supplied value that is returned with the response
      * @param callback - a callback method called when complete
      */
-   static checkAuthentication(options: CheckAuthenticationOptions, clientState?: ClientState, callback?: (message: ResponseMessage) => void) {
+    static checkAuthentication(
+        options: CheckAuthenticationOptions,
+        clientState?: ClientState,
+        callback?: (message: ResponseMessage) => void,
+    ) {
         const encodedClientState = prepare(clientState);
         const id = registerTemporaryCallback(callback, "checkAuthentication");
         checkAuthenticationAction(id, config, state, options, encodedClientState);
@@ -207,7 +227,11 @@ export class SsoClient {
      * @param clientState -The raw client state object
      * @param callback - a callback method called when complete
      */
-    static logout(options: LogoutOptions, clientState: ClientState, callback?: (message: ResponseMessage) => void) : string {
+    static logout(
+        options: LogoutOptions,
+        clientState: ClientState,
+        callback?: (message: ResponseMessage) => void,
+    ): string {
         const encodedClientState = prepare(clientState);
         const id = registerTemporaryCallback(callback, "logout");
         logoutAction(id, config, state, options.clientOnly, options.redirect, encodedClientState);
@@ -227,17 +251,17 @@ export class SsoClient {
     }
 }
 
-const handleUserActivity = () : boolean => {
+const handleUserActivity = (): boolean => {
     const elapsedMs = new Date().getTime() - (lastTokenCheck || 0);
     if (!config.options.autoRefresh || !ActivityMonitor.isActive || elapsedMs <= TOKEN_CHECK_INTERVAL_SECONDS * 1000) {
         return false;
     }
 
     lastTokenCheck = new Date().getTime();
-    const tokens= Tokens.get();
-    let refreshRequired = !tokens.accessToken || !tokens.idToken;
+    const tokens = Tokens.get();
+    let refreshRequired = tokens && (!tokens?.accessToken || !tokens?.idToken);
 
-    if (!tokens.refreshToken) {
+    if (!tokens?.refreshToken) {
         Logger.warn("Unable to refresh -- no refreshToken");
         authorizeAction(config);
         return false;
@@ -254,7 +278,7 @@ const handleUserActivity = () : boolean => {
         return true;
     }
 
-    return  false;
+    return false;
 };
 
 const registerTemporaryCallback = (callback: (message: ResponseMessage) => void, action: ActionType) => {
@@ -277,7 +301,7 @@ const eventListenerCallback = (e: MessageEvent) => {
         Logger.warn("Posted message origin does not match expected, stop processing", {
             expected: config.ssoUrl,
             actual: e.origin,
-            message: e
+            message: e,
         });
     }
 };
@@ -289,6 +313,8 @@ export const getTestContext = () => {
         eventListenerCallback,
         handleUserActivity,
         tokenExpirationBufferSeconds,
-        setLastTokenCheck: (dt?: number | undefined) => { lastTokenCheck = dt; }
+        setLastTokenCheck: (dt?: number | undefined) => {
+            lastTokenCheck = dt;
+        },
     };
 };

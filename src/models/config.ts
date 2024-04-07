@@ -1,6 +1,6 @@
-import {ClientState} from "./clientState";
-import {FunctionCallbacks} from "./response";
-import {InitializeOptions} from "./options";
+import { ClientState } from "./clientState";
+import { FunctionCallbacks } from "./response";
+import { InitializeOptions } from "./options";
 
 export class ClientConfig {
     clientState: ClientState;
@@ -14,7 +14,7 @@ export class ClientConfig {
     constructor() {
         this.callbacks = {};
         this.options = {
-            autoRefresh: true
+            autoRefresh: true,
         };
     }
 }

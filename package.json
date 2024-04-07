@@ -1,5 +1,5 @@
 {
-  "name": "cognito-sso-client",
+  "name": "@jasonatepaint/cognito-sso-client",
   "version": "1.0.0",
   "bugs": {
     "url": "https://github.com/jasonatepaint/cognito-sso-client/issues"

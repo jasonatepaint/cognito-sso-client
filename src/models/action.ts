@@ -39,14 +39,8 @@ export type ActionDetailType =
     | LogoutActionDetails
     | RedeemCodeActionDetails;
 
-export class Action {
+export interface Action {
     clientId: string;
     action: ActionType;
     details: ActionDetailType;
-
-    constructor(clientId: string, action: ActionType, details: ActionDetailType) {
-        this.clientId = clientId;
-        this.action = action;
-        this.details = details;
-    }
 }

@@ -27,7 +27,7 @@ export const checkAuthenticationAction = (
     encodedClientState?: string,
 ) => {
     options.redirect = options.redirect ?? true;
-    const { redirectUri, ssoUrl } = config;
+    const { redirectUri, ssoUrl, clientId } = config;
 
     //1. attempt code exchange
     const code = getValueFromQueryString(QS_AUTH_CODE);
@@ -37,17 +37,18 @@ export const checkAuthenticationAction = (
 
     //2. Tokens exist
     if (state.authentication?.refreshToken) {
-        return config.iFrame.contentWindow.postMessage(
-            new Action(config.clientId, "checkAuthentication", {
+        return config.iFrame.contentWindow.postMessage(<Action>{
+            clientId,
+            action: "checkAuthentication",
+            details: {
                 id,
                 redirectUnauthenticated: options.redirect,
                 redirectionReturnUrl: ssoUrl,
                 authentication: state.authentication,
                 redirectUri,
                 clientState: encodedClientState,
-            }),
-            "*",
-        );
+            }
+        }, "*");
     }
 
     //3. Unauthenticated

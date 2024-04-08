@@ -13,12 +13,13 @@ export const refreshTokensAction = (
     state: AuthenticationState,
     encodedClientState?: string,
 ) => {
-    config.iFrame.contentWindow.postMessage(
-        new Action(config.clientId, "refreshTokens", {
+    config.iFrame.contentWindow.postMessage(<Action>{
+        clientId: config.clientId,
+        action: "refreshTokens",
+        details: {
             id,
             authentication: state.authentication,
             clientState: encodedClientState,
-        }),
-        "*",
-    );
+        }
+    }, "*");
 };

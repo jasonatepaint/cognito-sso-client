@@ -21,16 +21,17 @@ export const redeemCodeAction = (
     const codeVerifier = getLocalStorageWithExpiration(CODE_VERIFIER_STORAGE_KEY);
     Logger.info("redeeming code", code);
     Logger.debug("Code Verifier", codeVerifier);
-    config.iFrame.contentWindow.postMessage(
-        new Action(config.clientId, "redeemCode", {
+    config.iFrame.contentWindow.postMessage(<Action>{
+        clientId: config.clientId,
+        action: "redeemCode",
+        details: {
             id,
             code,
             codeVerifier,
             redirectUri: config.redirectUri,
             clientId: config.clientId,
             clientState: encodedClientState,
-        }),
-        "*",
-    );
+        }
+    }, "*");
     removeFromLocalStorage(CODE_VERIFIER_STORAGE_KEY);
 };

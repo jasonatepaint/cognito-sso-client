@@ -20,14 +20,15 @@ export const logoutAction = (
     redirectToLogin = redirectToLogin ?? true;
     state.clearAuthentication();
 
-    config.iFrame.contentWindow.postMessage(
-        new Action(config.clientId, "logout", {
+    config.iFrame.contentWindow.postMessage(<Action>{
+        clientId: config.clientId,
+        action: "logout",
+        details: {
             id,
             redirectUnauthenticated: redirectToLogin,
             redirectUri: config.redirectUri,
             clientState: encodedClientState,
             clientOnlyLogout,
-        }),
-        "*",
-    );
+        }
+    }, "*");
 };

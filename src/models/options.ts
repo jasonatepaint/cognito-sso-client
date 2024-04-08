@@ -9,7 +9,7 @@ export interface InitializeOptions {
     logLevel?: LogLevel;
 }
 
-export interface CheckAuthenticationOptions {
+export interface AuthenticateOptions {
     /**
      * indicates the user should be redirected to the identity broker if not authenticated
      */

@@ -1,4 +1,4 @@
-import { authorizeAction } from "../../src/actions";
+import { initiateCodeFlowAction } from "../../src/actions";
 import { generateChallenge, generateRandom, buildUrlFromConfig } from "../../src/utils";
 import { setLocalStorageWithExpiration } from "../../src/storage";
 import { CODE_VERIFIER_STORAGE_KEY, QS_STATE } from "../../src/const";
@@ -32,7 +32,7 @@ describe("Authorize", () => {
 
     test("as expected", async () => {
         const encodedClientState = "this-is-encoded";
-        authorizeAction(config, encodedClientState);
+        initiateCodeFlowAction(config, encodedClientState);
 
         expect(generateRandomMocked).toHaveBeenCalledWith(128);
         expect(setLocalStorageWithExpirationMocked).toHaveBeenCalledWith(CODE_VERIFIER_STORAGE_KEY, codeVerifier, 900);
@@ -42,7 +42,7 @@ describe("Authorize", () => {
     });
 
     test("no clientState", async () => {
-        authorizeAction(config);
+        initiateCodeFlowAction(config);
 
         expect(generateRandomMocked).toHaveBeenCalledWith(128);
         expect(setLocalStorageWithExpirationMocked).toHaveBeenCalledWith(CODE_VERIFIER_STORAGE_KEY, codeVerifier, 900);

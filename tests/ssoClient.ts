@@ -4,8 +4,8 @@ import { defaultAuthentication, defaultConfig, defaultUser } from "./data";
 import { handleMessage } from "../src/messageHandler";
 import { AuthenticationState, ClientConfig } from "../src/models";
 import {
-    authorizeAction,
-    checkAuthenticationAction,
+    authenticateAction,
+    initiateCodeFlowAction,
     initializeAction,
     logoutAction,
     redeemCodeAction,
@@ -23,8 +23,8 @@ import { ResponseMessage, User } from "../src";
 
 jest.mock("../src/activityMonitor");
 jest.mock("../src/models/tokens");
-jest.mock("../src/actions/authorize");
-jest.mock("../src/actions/checkAuthentication");
+jest.mock("../src/actions/initiateCodeFlow");
+jest.mock("../src/actions/authenticate");
 jest.mock("../src/actions/initialize");
 jest.mock("../src/actions/logout");
 jest.mock("../src/actions/refreshTokens");
@@ -360,16 +360,16 @@ describe("Register / Unregister Callbacks", () => {
     });
 });
 
-describe("Authorize", () => {
+describe("initiate Code Flow", () => {
     beforeEach(function () {
         SsoClient.initialize(ssoUrl, clientId, redirectUri, authFrame, config.options, callback);
     });
 
     test("as expected", async () => {
-        SsoClient.authorize(clientState);
+        SsoClient.initiateCodeFlow(clientState);
 
         const ctx = getTestContext();
-        expect(authorizeAction).toHaveBeenCalledWith(ctx.config, encodedClientState);
+        expect(initiateCodeFlowAction).toHaveBeenCalledWith(ctx.config, encodedClientState);
         expect(prepare).toHaveBeenCalledWith(clientState);
     });
 });
@@ -450,7 +450,7 @@ describe("Handle User Activity", () => {
             );
             let updated = handleUserActivity();
             expect(updated).toBeTruthy();
-            expect(authorizeAction).toHaveBeenCalledTimes(0);
+            expect(initiateCodeFlowAction).toHaveBeenCalledTimes(0);
             expect(parseToken).toHaveBeenCalledTimes(1);
             expect(refreshTokensAction).toHaveBeenCalledTimes(1);
         });
@@ -464,7 +464,7 @@ describe("Handle User Activity", () => {
             );
             const updated = handleUserActivity();
             expect(updated).toBeFalsy();
-            expect(authorizeAction).toHaveBeenCalledTimes(0);
+            expect(initiateCodeFlowAction).toHaveBeenCalledTimes(0);
             expect(parseToken).toHaveBeenCalledTimes(0);
             expect(refreshTokensAction).toHaveBeenCalledTimes(0);
         });
@@ -473,7 +473,7 @@ describe("Handle User Activity", () => {
             getTestContext().setLastTokenCheck();
             let updated = handleUserActivity();
             expect(updated).toBeTruthy();
-            expect(authorizeAction).toHaveBeenCalledTimes(0);
+            expect(initiateCodeFlowAction).toHaveBeenCalledTimes(0);
             expect(parseToken).toHaveBeenCalledTimes(1);
             expect(refreshTokensAction).toHaveBeenCalledTimes(1);
         });
@@ -483,7 +483,7 @@ describe("Handle User Activity", () => {
         const updated = handleUserActivity();
         expect(updated).toBeTruthy();
 
-        expect(authorizeAction).toHaveBeenCalledTimes(0);
+        expect(initiateCodeFlowAction).toHaveBeenCalledTimes(0);
         expect(parseToken).toHaveBeenCalledWith(accessToken);
         expect(refreshTokensAction).toHaveBeenCalledWith(id, config, state);
     });
@@ -497,7 +497,7 @@ describe("Handle User Activity", () => {
         const updated = handleUserActivity();
         expect(updated).toBeFalsy();
 
-        expect(authorizeAction).toHaveBeenCalledTimes(0);
+        expect(initiateCodeFlowAction).toHaveBeenCalledTimes(0);
         expect(parseToken).toHaveBeenCalledTimes(0);
         expect(refreshTokensAction).toHaveBeenCalledTimes(0);
     });
@@ -507,7 +507,7 @@ describe("Handle User Activity", () => {
         const updated = handleUserActivity();
         expect(updated).toBeFalsy();
 
-        expect(authorizeAction).toHaveBeenCalledWith(config);
+        expect(initiateCodeFlowAction).toHaveBeenCalledWith(config);
         expect(parseToken).toHaveBeenCalledTimes(0);
         expect(refreshTokensAction).toHaveBeenCalledTimes(0);
     });
@@ -633,7 +633,7 @@ describe("Check Authentication", () => {
     let options;
     beforeEach(function () {
         SsoClient.initialize(ssoUrl, clientId, redirectUri, authFrame, options, callback);
-        id = createCallbackId("checkAuthentication");
+        id = createCallbackId("authenticate");
         options = {
             redirect: redirectToLogin,
             username,
@@ -642,8 +642,8 @@ describe("Check Authentication", () => {
 
     test("as expected", async () => {
         const { config, state } = getTestContext();
-        SsoClient.checkAuthentication(options, clientState);
-        expect(checkAuthenticationAction).toHaveBeenCalledWith(id, config, state, options, encodedClientState);
+        SsoClient.authenticate(options, clientState);
+        expect(authenticateAction).toHaveBeenCalledWith(id, config, state, options, encodedClientState);
         expect(prepare).toHaveBeenCalledWith(clientState); // make sure client state is encoded
     });
 
@@ -652,8 +652,8 @@ describe("Check Authentication", () => {
         const callback = jest.fn();
         const bindSpy = jest.spyOn(callback, "bind");
 
-        SsoClient.checkAuthentication(options, clientState, callback);
-        expect(checkAuthenticationAction).toHaveBeenCalledWith(id, config, state, options, encodedClientState);
+        SsoClient.authenticate(options, clientState, callback);
+        expect(authenticateAction).toHaveBeenCalledWith(id, config, state, options, encodedClientState);
         expect(prepare).toHaveBeenCalledWith(clientState); // make sure client state is encoded
         expect(config.callbacks[id]).toEqual(callback);
         expect(bindSpy).toHaveBeenCalledWith(SsoClient);

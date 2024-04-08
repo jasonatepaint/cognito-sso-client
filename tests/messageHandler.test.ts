@@ -2,7 +2,7 @@ import { handleMessage } from "../src/messageHandler";
 import { parseToken } from "../src/utils";
 import { getValueFromQueryString } from "../src/utils/url";
 import { defaultAuthentication, defaultConfig, defaultUser } from "./data";
-import { authorizeAction } from "../src/actions";
+import { initiateCodeFlowAction } from "../src/actions";
 import { AuthenticationState, ClientConfig, ResponseMessage, User } from "../src/models";
 import { decodeAndParse, encode } from "../src/utils/clientState";
 import { Tokens } from "../src/models/tokens";
@@ -10,8 +10,8 @@ import { handleAuthenticationEvent } from "../src/eventHandlers";
 import { makeCallbacks } from "../src/utils/callbacks";
 import { ActivityMonitor } from "../src/activityMonitor";
 
-jest.mock("../src/actions/authorize");
-jest.mock("../src/actions/checkAuthentication");
+jest.mock("../src/actions/initiateCodeFlow");
+jest.mock("../src/actions/authenticate");
 jest.mock("../src/utils/callbacks");
 jest.mock("../src/utils/tokens");
 jest.mock("../src/utils/browser");
@@ -69,7 +69,7 @@ beforeEach(() => {
     actionId = `action:refreshToken-${Date.now()}`;
     message = <MessageEvent<ResponseMessage>>{
         data: {
-            response: "checkAuthentication",
+            response: "authenticate",
             details: {
                 id: actionId,
                 success: true,
@@ -185,7 +185,7 @@ describe("initialized response", () => {
 
 describe("check authentication response", () => {
     beforeEach(function () {
-        message.data.response = "checkAuthentication";
+        message.data.response = "authenticate";
     });
 
     test("success", async () => {
@@ -256,7 +256,7 @@ describe("redirect to login response", () => {
         handleMessage(message, config, state);
 
         expect(handleAuthenticationEvent).toHaveBeenCalledTimes(0);
-        expect(authorizeAction).toHaveBeenCalledWith(config, encodedClientState);
+        expect(initiateCodeFlowAction).toHaveBeenCalledWith(config, encodedClientState);
         expect(callback).toHaveBeenCalledTimes(0);
     });
 });

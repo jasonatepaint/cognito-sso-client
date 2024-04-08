@@ -12,14 +12,14 @@ describe("Callback Ids", () => {
 describe("Make Callbacks", () => {
     let actionId: string;
     const message = <ResponseMessage>{
-        response: "checkAuthentication",
+        response: "authenticate",
         details: <ResponseDetails>{
             id: "details",
             success: true,
         },
     };
     beforeEach(function () {
-        actionId = createCallbackId("checkAuthentication");
+        actionId = createCallbackId("authenticate");
     });
 
     test("no temporary callbacks", async () => {

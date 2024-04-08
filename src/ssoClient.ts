@@ -1,6 +1,6 @@
 import {
-    authorizeAction,
-    checkAuthenticationAction,
+    authenticateAction,
+    initiateCodeFlowAction,
     initializeAction,
     logoutAction,
     redeemCodeAction,
@@ -15,7 +15,7 @@ import dayjs from "dayjs";
 import { createCallbackId } from "./utils/callbacks";
 import { Tokens } from "./models/tokens";
 import { ClientState, User } from "./models";
-import { CheckAuthenticationOptions, InitializeOptions, LogoutOptions } from "./models/options";
+import { AuthenticateOptions, InitializeOptions, LogoutOptions } from "./models/options";
 import { FunctionCallbacks, ResponseMessage } from "./models/response";
 import { removeTrailingSlash } from "./utils/url";
 import { Logger, LogLevel } from "./utils/logging";
@@ -179,12 +179,12 @@ export class SsoClient {
     }
 
     /**
-     * Initiates the Authentication process for the user
+     * Initiates the Authentication Code Flow process for the user
      * @param clientState - a client supplied value that is returned with the response
      */
-    static authorize(clientState?: ClientState) {
+    static initiateCodeFlow(clientState?: ClientState) {
         const encodedClientState = prepare(clientState);
-        authorizeAction(config, encodedClientState);
+        initiateCodeFlowAction(config, encodedClientState);
     }
 
     /**
@@ -210,14 +210,14 @@ export class SsoClient {
      * @param clientState - a client supplied value that is returned with the response
      * @param callback - a callback method called when complete
      */
-    static checkAuthentication(
-        options: CheckAuthenticationOptions,
+    static authenticate(
+        options: AuthenticateOptions,
         clientState?: ClientState,
         callback?: (message: ResponseMessage) => void,
     ) {
         const encodedClientState = prepare(clientState);
-        const id = registerTemporaryCallback(callback, "checkAuthentication");
-        checkAuthenticationAction(id, config, state, options, encodedClientState);
+        const id = registerTemporaryCallback(callback, "authenticate");
+        authenticateAction(id, config, state, options, encodedClientState);
         return id;
     }
 
@@ -263,7 +263,7 @@ const handleUserActivity = (): boolean => {
 
     if (!tokens?.refreshToken) {
         Logger.warn("Unable to refresh -- no refreshToken");
-        authorizeAction(config);
+        initiateCodeFlowAction(config);
         return false;
     } else if (!refreshRequired) {
         // determine our next check time w/a buffer. If the expiration is after that time (+ buffer) we'll require a refresh

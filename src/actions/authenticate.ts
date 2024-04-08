@@ -2,9 +2,9 @@ import { Action, AuthenticationState, ClientConfig } from "../models";
 import { getValueFromQueryString } from "../utils/url";
 import { QS_AUTH_CODE } from "../const";
 import { redeemCodeAction } from "./redeemCode";
-import { authorizeAction } from "./authorize";
+import { initiateCodeFlowAction } from "./initiateCodeFlow";
 import { makeCallbacks } from "../utils/callbacks";
-import { CheckAuthenticationOptions } from "../models/options";
+import { AuthenticateOptions } from "../models/options";
 import { Logger } from "../utils/logging";
 
 /**
@@ -19,11 +19,11 @@ import { Logger } from "../utils/logging";
  * @param options
  * @param encodedClientState - encoded client state - will be returned in response
  */
-export const checkAuthenticationAction = (
+export const authenticateAction = (
     id: string,
     config: ClientConfig,
     state: AuthenticationState,
-    options: CheckAuthenticationOptions,
+    options: AuthenticateOptions,
     encodedClientState?: string,
 ) => {
     options.redirect = options.redirect ?? true;
@@ -39,7 +39,7 @@ export const checkAuthenticationAction = (
     if (state.authentication?.refreshToken) {
         return config.iFrame.contentWindow.postMessage(<Action>{
             clientId,
-            action: "checkAuthentication",
+            action: "authenticate",
             details: {
                 id,
                 redirectUnauthenticated: options.redirect,
@@ -54,11 +54,11 @@ export const checkAuthenticationAction = (
     //3. Unauthenticated
     Logger.debug("unauthenticated");
     if (options.redirect) {
-        return authorizeAction(config, encodedClientState);
+        return initiateCodeFlowAction(config, encodedClientState);
     }
 
     makeCallbacks(id, config.callbacks, {
-        response: "checkAuthentication",
+        response: "authenticate",
         details: {
             id,
             isAuthenticated: false,

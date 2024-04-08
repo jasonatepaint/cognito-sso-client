@@ -1,7 +1,7 @@
 import { TokenCollection } from "./tokens";
 
 enum Actions {
-    checkAuthentication,
+    authenticate,
     initialize,
     logout,
     redeemCode,

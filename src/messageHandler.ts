@@ -1,4 +1,4 @@
-import { authorizeAction } from "./actions";
+import { initiateCodeFlowAction } from "./actions";
 import { handleAuthenticationEvent } from "./eventHandlers";
 import { makeCallbacks } from "./utils/callbacks";
 import { getValueFromQueryString } from "./utils/url";
@@ -42,7 +42,7 @@ export const handleMessage = (
         case "initialized":
             makeCallbacks(id, config.callbacks, responseMessage);
             break;
-        case "checkAuthentication":
+        case "authenticate":
         case "redeemCode":
         case "refreshTokens":
             const tokens = success && isAuthenticated && authentication ? authentication : undefined;
@@ -56,7 +56,7 @@ export const handleMessage = (
             makeCallbacks(id, config.callbacks, responseMessage);
             break;
         case "redirectToLogin":
-            authorizeAction(config, encodedClientState);
+            initiateCodeFlowAction(config, encodedClientState);
             break;
         default:
             Logger.debug("Invalid message response received", responseMessage);

@@ -5,11 +5,11 @@ import { generateRandom, generateChallenge, buildUrlFromConfig } from "../utils"
 import { ClientConfig } from "../models";
 
 /**
- * Initiates the Authentication process for the user
+ * Initiates the Authorization Code Flow process for the user
  * @param config
  * @param encodedClientState - encoded client state - will be returned in response
  */
-export const authorizeAction = (config: ClientConfig, encodedClientState?: string) => {
+export const initiateCodeFlowAction = (config: ClientConfig, encodedClientState?: string) => {
     const codeVerifier = generateRandom(128);
     setLocalStorageWithExpiration(CODE_VERIFIER_STORAGE_KEY, codeVerifier, 900);
     const codeChallenge = generateChallenge(codeVerifier);

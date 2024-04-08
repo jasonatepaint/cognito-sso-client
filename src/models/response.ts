@@ -3,7 +3,7 @@ import { User } from "./user";
 
 enum Responses {
     initialized,
-    checkAuthentication,
+    authenticate,
     logout,
     redeemCode,
     refreshTokens,

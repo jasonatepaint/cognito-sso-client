@@ -1,10 +1,10 @@
-import { authorizeAction, checkAuthenticationAction, redeemCodeAction } from "../../src/actions";
+import { authenticateAction, initiateCodeFlowAction, redeemCodeAction } from "../../src/actions";
 import { getValueFromQueryString } from "../../src/utils/url";
 import { defaultAuthentication, defaultConfig } from "../data";
 import { Tokens } from "../../src/models/tokens";
 import { makeCallbacks } from "../../src/utils/callbacks";
 
-jest.mock("../../src/actions/authorize");
+jest.mock("../../src/actions/initiateCodeFlow");
 jest.mock("../../src/actions/redeemCode");
 jest.mock("../../src/utils/url");
 jest.mock("../../src/utils/callbacks");
@@ -33,11 +33,11 @@ describe("Check Authentication", () => {
     });
 
     test("has current authentication", async () => {
-        checkAuthenticationAction(id, config, state, options, clientState);
+        authenticateAction(id, config, state, options, clientState);
         expect(config.iFrame.contentWindow.postMessage).toHaveBeenCalledWith(
             {
                 clientId: config.clientId,
-                action: "checkAuthentication",
+                action: "authenticate",
                 details: {
                     id,
                     redirectUnauthenticated: options.redirect,
@@ -50,7 +50,7 @@ describe("Check Authentication", () => {
             "*",
         );
 
-        expect(authorizeAction).toHaveBeenCalledTimes(0);
+        expect(initiateCodeFlowAction).toHaveBeenCalledTimes(0);
         expect(redeemCodeAction).toHaveBeenCalledTimes(0);
         expect(makeCallbacks).not.toHaveBeenCalled();
     });
@@ -59,7 +59,7 @@ describe("Check Authentication", () => {
         state = {};
         mockGetValueFromQueryString.mockReturnValue("1234");
 
-        checkAuthenticationAction(id, config, state, options, clientState);
+        authenticateAction(id, config, state, options, clientState);
 
         expect(redeemCodeAction).toHaveBeenCalledWith(id, config, state, "1234", clientState);
         expect(config.iFrame.contentWindow.postMessage).not.toHaveBeenCalled();
@@ -70,11 +70,11 @@ describe("Check Authentication", () => {
         state = { currentAuthentication: new Tokens() };
         mockGetValueFromQueryString.mockReturnValue(undefined);
 
-        checkAuthenticationAction(id, config, state, options, clientState);
+        authenticateAction(id, config, state, options, clientState);
 
         expect(redeemCodeAction).toHaveBeenCalledTimes(0);
         expect(config.iFrame.contentWindow.postMessage).toHaveBeenCalledTimes(0);
-        expect(authorizeAction).toHaveBeenCalledWith(config, clientState);
+        expect(initiateCodeFlowAction).toHaveBeenCalledWith(config, clientState);
         expect(makeCallbacks).not.toHaveBeenCalled();
     });
 
@@ -83,12 +83,12 @@ describe("Check Authentication", () => {
         mockGetValueFromQueryString.mockReturnValue(undefined);
 
         options.redirect = false;
-        checkAuthenticationAction(id, config, state, options, clientState);
+        authenticateAction(id, config, state, options, clientState);
 
         expect(redeemCodeAction).toHaveBeenCalledTimes(0);
-        expect(authorizeAction).toHaveBeenCalledTimes(0);
+        expect(initiateCodeFlowAction).toHaveBeenCalledTimes(0);
         expect(makeCallbacks).toHaveBeenCalledWith(id, config.callbacks, {
-            response: "checkAuthentication",
+            response: "authenticate",
             details: {
                 id,
                 isAuthenticated: false,

@@ -1,13 +1,13 @@
-import { authorizeAction } from "./authorize";
-import { checkAuthenticationAction } from "./checkAuthentication";
+import { initiateCodeFlowAction } from "./initiateCodeFlow";
+import { authenticateAction } from "./authenticate";
 import { initializeAction } from "./initialize";
 import { logoutAction } from "./logout";
 import { redeemCodeAction } from "./redeemCode";
 import { refreshTokensAction } from "./refreshTokens";
 
 export {
-    authorizeAction,
-    checkAuthenticationAction,
+    authenticateAction,
+    initiateCodeFlowAction,
     initializeAction,
     logoutAction,
     redeemCodeAction,

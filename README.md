@@ -215,8 +215,8 @@ function logout(
 
 ###### Parameters:
 - `options` -- Logout Options
-    -  `clientOnly` -- Determines whether the user is logged out of both SSO and the client app, or just the client.
-    -  `redirect` -- Determines if the user will be redirected to the identity broker if not authenticated
+    - `clientOnly` -- Determines whether the user is logged out of both SSO and the client app, or just the client.
+    - `redirect` -- Determines if the user will be redirected to the identity broker if not authenticated
 - `clientState` -- An object representing any state that should be sent to the broker and returned on redirects
 - `callback` -- A callback method that is called when this action is complete
 

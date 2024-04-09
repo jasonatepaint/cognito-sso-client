@@ -11,8 +11,8 @@ export interface ItemWithExpiration {
  * Gets an item in storage. If the item exists but expired a null will be returned
  * @param key - key of item
  */
-export const getLocalStorageWithExpiration = (key: string): string | undefined => {
-    const data = localStorage.getItem(key);
+export const getFromLocalStorageWithExpiration = (key: string): string | undefined => {
+    const data = getFromLocalStorage(key);
     const item = JSON.parse(data) as ItemWithExpiration;
     if (item) {
         if (item.expiration > new Date().getTime()) {
@@ -22,6 +22,14 @@ export const getLocalStorageWithExpiration = (key: string): string | undefined =
             removeFromLocalStorage(key);
         }
     }
+};
+
+/***
+ * Gets an item from local storage.
+ * @param key - key of item
+ */
+export const getFromLocalStorage = (key: string): string | undefined => {
+    return localStorage.getItem(key);
 };
 
 /***
@@ -36,7 +44,16 @@ export const setLocalStorageWithExpiration = (key: string, value: string, ttl: n
         value,
         expiration,
     });
-    localStorage.setItem(key, data);
+    setLocalStorage(key, data);
+};
+
+/***
+* Puts an item in storage with a TTL
+* @param key - key of item
+* @param value - item value
+*/
+export const setLocalStorage = (key: string, value: string) => {
+    localStorage.setItem(key, value);
 };
 
 export const removeFromLocalStorage = (key: string) => {

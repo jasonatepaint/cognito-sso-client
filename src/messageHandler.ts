@@ -33,10 +33,7 @@ export const handleMessage = (
     // If it exists, we'll decode it from the QS first, because it was a redirect. If we don't have state on the QS, we'll
     // search for it in the response
     const qsState = getValueFromQueryString(QS_STATE);
-    const encodedClientState = qsState || responseMessage.details.clientState;
-    if (qsState) {
-        responseMessage.details.clientState = encodedClientState;
-    }
+    responseMessage.details.clientState = qsState || responseMessage.details.clientState;
 
     switch (responseMessage.response) {
         case "initialized":
@@ -56,7 +53,7 @@ export const handleMessage = (
             makeCallbacks(id, config.callbacks, responseMessage);
             break;
         case "redirectToLogin":
-            initiateCodeFlowAction(config, encodedClientState);
+            initiateCodeFlowAction(config, responseMessage.details.clientState);
             break;
         default:
             Logger.debug("Invalid message response received", responseMessage);

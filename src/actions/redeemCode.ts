@@ -1,4 +1,4 @@
-import { getLocalStorageWithExpiration, removeFromLocalStorage } from "../storage";
+import { getFromLocalStorageWithExpiration, removeFromLocalStorage } from "../storage";
 import { CODE_VERIFIER_STORAGE_KEY } from "../const";
 import { Action, AuthenticationState, ClientConfig } from "../models";
 import { Logger } from "../utils/logging";
@@ -18,7 +18,7 @@ export const redeemCodeAction = (
     code: string,
     encodedClientState?: string,
 ) => {
-    const codeVerifier = getLocalStorageWithExpiration(CODE_VERIFIER_STORAGE_KEY);
+    const codeVerifier = getFromLocalStorageWithExpiration(CODE_VERIFIER_STORAGE_KEY);
     Logger.info("redeeming code", code);
     Logger.debug("Code Verifier", codeVerifier);
     config.iFrame.contentWindow.postMessage(<Action>{

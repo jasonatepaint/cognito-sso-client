@@ -1,5 +1,5 @@
 import { launchUri } from "../utils/browser";
-import { setLocalStorageWithExpiration } from "../storage";
+import { setLocalStorage } from "../storage";
 import { CODE_VERIFIER_STORAGE_KEY, QS_STATE } from "../const";
 import { generateRandom, generateChallenge, buildUrlFromConfig } from "../utils";
 import { ClientConfig } from "../models";
@@ -11,7 +11,7 @@ import { ClientConfig } from "../models";
  */
 export const initiateCodeFlowAction = (config: ClientConfig, encodedClientState?: string) => {
     const codeVerifier = generateRandom(128);
-    setLocalStorageWithExpiration(CODE_VERIFIER_STORAGE_KEY, codeVerifier, 900);
+    setLocalStorage(CODE_VERIFIER_STORAGE_KEY, codeVerifier);
     const codeChallenge = generateChallenge(codeVerifier);
 
     const qsParams = {

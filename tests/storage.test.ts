@@ -1,4 +1,10 @@
-import { getLocalStorageWithExpiration, setLocalStorageWithExpiration, removeFromLocalStorage } from "../src/storage";
+import {
+	getFromLocalStorage,
+	getFromLocalStorageWithExpiration,
+	setLocalStorage,
+	setLocalStorageWithExpiration,
+	removeFromLocalStorage
+} from "../src/storage";
 
 const date = new Date();
 jest.useFakeTimers().setSystemTime(date);
@@ -12,7 +18,12 @@ beforeAll(() => {
 });
 
 describe("Local Storage", () => {
-    test("Get With Expiration", async () => {
+	test('Get from storage', async () => {
+		localStorage.setItem(key, value);
+		expect(getFromLocalStorage(key)).toEqual(value);
+	});
+
+	test("Get With Expiration", async () => {
         localStorage.setItem(
             key,
             JSON.stringify({
@@ -20,7 +31,7 @@ describe("Local Storage", () => {
                 expiration: new Date(new Date().getFullYear() + 1, 1, 1).getTime(),
             }),
         );
-        expect(getLocalStorageWithExpiration(key)).toEqual(value);
+        expect(getFromLocalStorageWithExpiration(key)).toEqual(value);
         expect(localStorage.getItem(key)).toBeDefined();
     });
 
@@ -32,12 +43,18 @@ describe("Local Storage", () => {
                 expiration: Date.now() - 100, //expired 100ms ago
             }),
         );
-        expect(getLocalStorageWithExpiration(key)).toBeUndefined();
+        expect(getFromLocalStorageWithExpiration(key)).toBeUndefined();
         expect(localStorage.getItem(key)).toBeNull();
     });
 
-    test("Set with Expiration as number", async () => {
+	test('Set item', async () => {
+		setLocalStorage(key, value);
+		expect(localStorage.getItem(key)).toEqual(value);
+	});
+
+	test("Set with Expiration as number", async () => {
         setLocalStorageWithExpiration(key, value, 5);
+		const f = localStorage.getItem(key);
         const item = JSON.parse(localStorage.getItem(key));
         expect(item.value).toEqual(value);
         expect(item.expiration).toEqual(date.getTime() + 5000);

@@ -1,6 +1,6 @@
 import { Tokens, REFRESH_TOKEN_EXPIRATION_DAYS } from "../../src/models/tokens";
 import {
-    getLocalStorageWithExpiration,
+    getFromLocalStorageWithExpiration,
     removeFromLocalStorage,
     setLocalStorageWithExpiration,
 } from "../../src/storage";
@@ -11,7 +11,7 @@ import { parseToken } from "../../src/utils";
 jest.mock("../../src/storage");
 jest.mock("../../src/utils");
 
-const mockGetLocalStorageWithExpiration = getLocalStorageWithExpiration as jest.Mock;
+const mockGetLocalStorageWithExpiration = getFromLocalStorageWithExpiration as jest.Mock;
 const mockParseToken = parseToken as jest.Mock;
 
 let authentication;
@@ -63,9 +63,9 @@ describe("Authentication Tokens", () => {
         expect(auth.idToken).toEqual(authentication.idToken);
         expect(auth.refreshToken).toEqual(authentication.refreshToken);
 
-        expect(getLocalStorageWithExpiration).toHaveBeenCalledWith(AUTH_REFRESH_STORAGE_KEY);
-        expect(getLocalStorageWithExpiration).toHaveBeenCalledWith(AUTH_ACCESS_STORAGE_KEY);
-        expect(getLocalStorageWithExpiration).toHaveBeenCalledWith(AUTH_ID_STORAGE_KEY);
+        expect(getFromLocalStorageWithExpiration).toHaveBeenCalledWith(AUTH_REFRESH_STORAGE_KEY);
+        expect(getFromLocalStorageWithExpiration).toHaveBeenCalledWith(AUTH_ACCESS_STORAGE_KEY);
+        expect(getFromLocalStorageWithExpiration).toHaveBeenCalledWith(AUTH_ID_STORAGE_KEY);
     });
 
     describe("Set Tokens", () => {

@@ -1,6 +1,6 @@
 import { initiateCodeFlowAction } from "../../src/actions";
 import { generateChallenge, generateRandom, buildUrlFromConfig } from "../../src/utils";
-import { setLocalStorageWithExpiration } from "../../src/storage";
+import { setLocalStorage } from "../../src/storage";
 import { CODE_VERIFIER_STORAGE_KEY, QS_STATE } from "../../src/const";
 import { launchUri } from "../../src/utils/browser";
 import { defaultConfig } from "../data";
@@ -13,7 +13,7 @@ jest.mock("../../src/utils/tokens");
 
 const generateRandomMocked = generateRandom as jest.Mock;
 const generateChallengeMocked = generateChallenge as jest.Mock;
-const setLocalStorageWithExpirationMocked = setLocalStorageWithExpiration as jest.Mock;
+const setLocalStorageMocked = setLocalStorage as jest.Mock;
 const launchUriMocked = launchUri as jest.Mock;
 
 describe("Authorize", () => {
@@ -27,7 +27,7 @@ describe("Authorize", () => {
         generateChallengeMocked.mockClear();
         generateChallengeMocked.mockReturnValue(codeChallenge);
 
-        setLocalStorageWithExpirationMocked.mockClear();
+        setLocalStorageMocked.mockClear();
     });
 
     test("as expected", async () => {
@@ -35,7 +35,7 @@ describe("Authorize", () => {
         initiateCodeFlowAction(config, encodedClientState);
 
         expect(generateRandomMocked).toHaveBeenCalledWith(128);
-        expect(setLocalStorageWithExpirationMocked).toHaveBeenCalledWith(CODE_VERIFIER_STORAGE_KEY, codeVerifier, 900);
+        expect(setLocalStorageMocked).toHaveBeenCalledWith(CODE_VERIFIER_STORAGE_KEY, codeVerifier);
         expect(generateChallengeMocked).toHaveBeenCalledWith(codeVerifier);
         const url = `${buildUrlFromConfig(config)}&codeChallenge=${codeChallenge}&${QS_STATE}=${encodedClientState}`;
         expect(launchUriMocked).toHaveBeenCalledWith(url);
@@ -45,7 +45,7 @@ describe("Authorize", () => {
         initiateCodeFlowAction(config);
 
         expect(generateRandomMocked).toHaveBeenCalledWith(128);
-        expect(setLocalStorageWithExpirationMocked).toHaveBeenCalledWith(CODE_VERIFIER_STORAGE_KEY, codeVerifier, 900);
+        expect(setLocalStorageMocked).toHaveBeenCalledWith(CODE_VERIFIER_STORAGE_KEY, codeVerifier);
         expect(generateChallengeMocked).toHaveBeenCalledWith(codeVerifier);
         const url = `${buildUrlFromConfig(config)}&codeChallenge=${codeChallenge}`;
         expect(launchUriMocked).toHaveBeenCalledWith(url);

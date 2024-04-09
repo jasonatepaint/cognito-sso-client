@@ -1,4 +1,4 @@
-import { getLocalStorageWithExpiration, setLocalStorageWithExpiration, removeFromLocalStorage } from "../storage";
+import { getFromLocalStorageWithExpiration, setLocalStorageWithExpiration, removeFromLocalStorage } from "../storage";
 import { AUTH_ACCESS_STORAGE_KEY, AUTH_ID_STORAGE_KEY, AUTH_REFRESH_STORAGE_KEY } from "../const";
 import { parseToken } from "../utils";
 
@@ -24,9 +24,9 @@ export class Tokens implements TokenCollection {
      * Gets Authentication Tokens from local storage
      */
     static get(): Tokens | undefined {
-        const refreshToken = getLocalStorageWithExpiration(AUTH_REFRESH_STORAGE_KEY);
-        const accessToken = getLocalStorageWithExpiration(AUTH_ACCESS_STORAGE_KEY);
-        const idToken = getLocalStorageWithExpiration(AUTH_ID_STORAGE_KEY);
+        const refreshToken = getFromLocalStorageWithExpiration(AUTH_REFRESH_STORAGE_KEY);
+        const accessToken = getFromLocalStorageWithExpiration(AUTH_ACCESS_STORAGE_KEY);
+        const idToken = getFromLocalStorageWithExpiration(AUTH_ID_STORAGE_KEY);
         return refreshToken || accessToken || idToken
             ? new Tokens({
                   accessToken,

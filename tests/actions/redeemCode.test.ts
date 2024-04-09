@@ -1,10 +1,10 @@
-import { getFromLocalStorageWithExpiration } from "../../src/storage";
+import { getFromLocalStorage } from "../../src/storage";
 import { defaultAuthentication, defaultConfig } from "../data";
 import { redeemCodeAction } from "../../src/actions";
 
 jest.mock("../../src/storage");
 
-const mockGetLocalStorageWithExpiration = getFromLocalStorageWithExpiration as jest.Mock;
+const mockGetLocalStorageWithExpiration = getFromLocalStorage as jest.Mock;
 
 describe("Redeem Authentication Code", () => {
     const id = "command-id";

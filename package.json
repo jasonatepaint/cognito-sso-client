@@ -1,6 +1,6 @@
 {
   "name": "@jasonatepaint/cognito-sso-client",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "type": "module",
   "bugs": {
     "url": "https://github.com/jasonatepaint/cognito-sso-client/issues"

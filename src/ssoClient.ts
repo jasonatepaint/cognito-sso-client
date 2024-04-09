@@ -53,30 +53,30 @@ export class SsoClient {
     }
 
     /**
-     * holds a reference to the iframe that communicates with the SSO Broker site
+     * holds a reference to the auth iframe
      * */
     static get iFrame(): HTMLIFrameElement {
         return config.iFrame;
     }
 
     /**
-     * The callback methods that handle responses to Unified Login Authentication Component API commands
+     * The callback methods that handle responses
      * */
     static get callbacks(): FunctionCallbacks {
         return config.callbacks;
     }
 
     /**
-     * holds references to authentication tokens
+     * The user's authentication tokens
      **/
-    static get authentication(): Tokens {
+    static get authentication(): Tokens | undefined {
         return Tokens.get();
     }
 
     /**
-     * holds an object whose properties describe the current user
+     * The current user
      * */
-    static get user(): User {
+    static get user(): User | undefined {
         return state.user;
     }
 
@@ -157,7 +157,7 @@ export class SsoClient {
     };
 
     /**
-     * Registers a callback that will receive all messages from the component api
+     * Registers a callback that will receive all messages from the SSO Broker
      */
     static registerCallback(id: string, callback: (message: ResponseMessage) => void) {
         if (!id || !callback) return;
@@ -180,7 +180,7 @@ export class SsoClient {
 
     /**
      * Initiates the Authentication Code Flow process for the user
-     * @param clientState - a client supplied value that is returned with the response
+     * @param clientState - An object representing any state that should be sent to the broker and returned on redirects
      */
     static initiateCodeFlow(clientState?: ClientState) {
         const encodedClientState = prepare(clientState);
@@ -190,7 +190,7 @@ export class SsoClient {
     /**
      * Exchanges an authentication code for authentication tokens
      * @param code - authentication code
-     * @param clientState - a client supplied value that is returned with the response
+     * @param clientState - An object representing any state that should be sent to the broker and returned on redirects
      * @param callback - a callback method called when complete
      */
     static redeemAuthenticationCode(
@@ -207,7 +207,7 @@ export class SsoClient {
     /**
      * checks if the current user is authenticated
      * @param options
-     * @param clientState - a client supplied value that is returned with the response
+     * @param clientState - An object representing any state that should be sent to the broker and returned on redirects
      * @param callback - a callback method called when complete
      */
     static authenticate(
@@ -224,7 +224,7 @@ export class SsoClient {
     /**
      * Logs out the  user
      * @param options - Logout Options
-     * @param clientState -The raw client state object
+     * @param clientState - An object representing any state that should be sent to the broker and returned on redirects
      * @param callback - a callback method called when complete
      */
     static logout(
@@ -240,7 +240,7 @@ export class SsoClient {
 
     /**
      * Refreshes client tokens
-     * @param clientState - a client supplied value that is returned with the response
+     * @param clientState - An object representing any state that should be sent to the broker and returned on redirects
      * @param callback - a callback method called when complete
      */
     static refreshTokens(clientState?: ClientState, callback?: (message: ResponseMessage) => void) {

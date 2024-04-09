@@ -18,11 +18,11 @@ export interface AuthenticateOptions {
 
 export interface LogoutOptions {
     /**
-     * indicates whether the user is logged out of both SSO and the client app, or just the client.
+     * determines whether the user is logged out of both SSO and the client app, or just the client.
      */
     clientOnly: boolean;
     /**
-     * indicates the user should be redirected to the identity broker if not authenticated
+     * determines if the user will be redirected to the identity broker if not authenticated
      */
     redirect: boolean;
 }

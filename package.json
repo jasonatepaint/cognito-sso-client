@@ -1,16 +1,24 @@
 {
   "name": "@jasonatepaint/cognito-sso-client",
+  "description": "The client library handles all of the communication between the client application and the SSO broker.",
   "version": "1.0.7",
   "type": "module",
   "bugs": {
     "url": "https://github.com/jasonatepaint/cognito-sso-client/issues"
   },
   "homepage": "https://github.com/jasonatepaint/cognito-sso-client#readme",
+  "keywords": [
+    "cognito",
+    "sso",
+    "broker",
+    "idp"
+  ],
+  "author": "Jason Fischer",
+  "license": "ISC",
   "scripts": {
     "clean": "rimraf dist",
     "prepare": "npm run clean && npm run lint && npm run build",
-    "lint": "./node_modules/.bin/eslint src",
-    "build-old": "babel src --extensions \".ts\" --out-dir dist && webpack",
+    "lint": "eslint src",
     "build:pack": "node esbuild.config.cjs",
     "build:types": "tsc --project tsconfig.build.json && npm run lint",
     "build": "npm run build:pack && npm run build:types",
@@ -54,6 +62,10 @@
     "README.md"
   ],
   "publishConfig": {
-    "registry": "https://npm.pkg.github.com/"
+    "access": "public"
+  },
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
   }
 }

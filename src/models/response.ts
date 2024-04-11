@@ -1,16 +1,8 @@
 import { Tokens } from "./tokens";
 import { User } from "./user";
 
-enum Responses {
-    initialized,
-    authenticate,
-    logout,
-    redeemCode,
-    refreshTokens,
-    redirectToLogin,
-}
-
-export type ResponseType = keyof typeof Responses;
+export type ResponseType =
+    "initialized" | "authenticate" | "logout" | "redeemCode" | "refreshTokens" | "redirectToLogin";
 
 export interface FunctionCallbacks {
     [key: string]: (message: ResponseMessage) => void;

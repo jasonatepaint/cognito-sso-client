@@ -1,14 +1,6 @@
 import { TokenCollection } from "./tokens";
 
-enum Actions {
-    authenticate,
-    initialize,
-    logout,
-    redeemCode,
-    refreshTokens,
-}
-
-export type ActionType = keyof typeof Actions;
+export type ActionType = "authenticate" | "initialize" | "logout" | "redeemCode" | "refreshTokens";
 
 export interface ActionDetails {
     id: string;
